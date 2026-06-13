@@ -24,13 +24,14 @@
             overflow: hidden; 
         }
         
-        /* El contenedor ocupa exactamente el 75% del ancho y alto, dejando 25% de bordes libres */
+        /* El contenedor ocupa exactamente el 75% del ancho y alto */
         .contenedor { 
             width: 75vw; 
             height: 75vh; 
             display: flex; 
             flex-direction: column;
-            justify-content: space-between; /* Manda un hijo arriba y el otro abajo */
+            justify-content: space-between; 
+            overflow: hidden; /* Garantiza que nada se salga visualmente de este 75% */
         }
         
         /* Texto superior izquierdo */
@@ -39,7 +40,7 @@
             color: #fff; 
             text-transform: uppercase; 
             text-align: left;
-            align-self: flex-start; /* Lo alinea a la izquierda */
+            align-self: flex-start; 
             line-height: 1.1; 
             font-size: var(--font-size, 4vw);
             transition: opacity 0.5s ease-in-out;
@@ -48,17 +49,17 @@
         /* Texto inferior derecho */
         .referencia {
             font-family: "Times New Roman", Times, serif; 
-            color: #aaa; /* Color ligeramente apagado para hacer contraste jerárquico */
+            color: #aaa; 
             text-transform: uppercase; 
             text-align: right;
-            align-self: flex-end; /* Lo alinea a la derecha */
+            align-self: flex-end; 
             line-height: 1.2; 
-            font-size: calc(var(--font-size, 4vw) * 0.4); /* Siempre será más pequeño que el versículo */
+            /* Se asegura de que la referencia siempre sea legible (mínimo 14px) */
+            font-size: max(calc(var(--font-size, 4vw) * 0.4), 14px); 
             transition: opacity 0.5s ease-in-out;
             margin-top: 20px;
         }
 
-        /* Clase de utilidad para ocultar el texto temporalmente mientras cambia */
         .oculto {
             opacity: 0;
         }
@@ -67,39 +68,32 @@
 <body>
 
     <div class="contenedor">
-        <div class="versiculo" id="versiculo">CARGANDO VERSÍCULO...</div>
+        <div class="versiculo" id="versiculo">LOADING VERSE...</div>
         <div class="referencia" id="referencia"></div>
     </div>
 
     <script>
-        // Array para saber exactamente el límite de capítulos por cada libro y garantizar aleatoriedad real.
         const libros = [
             {n: "Genesis", c: 50}, {n: "Exodus", c: 40}, {n: "Leviticus", c: 27}, {n: "Numbers", c: 36}, {n: "Deuteronomy", c: 34}, {n: "Joshua", c: 24}, {n: "Judges", c: 21}, {n: "Ruth", c: 4}, {n: "1 Samuel", c: 31}, {n: "2 Samuel", c: 24}, {n: "1 Kings", c: 22}, {n: "2 Kings", c: 25}, {n: "1 Chronicles", c: 29}, {n: "2 Chronicles", c: 36}, {n: "Ezra", c: 10}, {n: "Nehemiah", c: 13}, {n: "Esther", c: 10}, {n: "Job", c: 42}, {n: "Psalms", c: 150}, {n: "Proverbs", c: 31}, {n: "Ecclesiastes", c: 12}, {n: "Song of Solomon", c: 8}, {n: "Isaiah", c: 66}, {n: "Jeremiah", c: 52}, {n: "Lamentations", c: 5}, {n: "Ezekiel", c: 48}, {n: "Daniel", c: 12}, {n: "Hosea", c: 14}, {n: "Joel", c: 3}, {n: "Amos", c: 9}, {n: "Obadiah", c: 1}, {n: "Jonah", c: 4}, {n: "Micah", c: 7}, {n: "Nahum", c: 3}, {n: "Habakkuk", c: 3}, {n: "Zephaniah", c: 3}, {n: "Haggai", c: 2}, {n: "Zechariah", c: 14}, {n: "Malachi", c: 4}, {n: "Matthew", c: 28}, {n: "Mark", c: 16}, {n: "Luke", c: 24}, {n: "John", c: 21}, {n: "Acts", c: 28}, {n: "Romans", c: 16}, {n: "1 Corinthians", c: 16}, {n: "2 Corinthians", c: 13}, {n: "Galatians", c: 6}, {n: "Ephesians", c: 6}, {n: "Philippians", c: 4}, {n: "Colossians", c: 4}, {n: "1 Thessalonians", c: 5}, {n: "2 Thessalonians", c: 3}, {n: "1 Timothy", c: 6}, {n: "2 Timothy", c: 4}, {n: "Titus", c: 3}, {n: "Philemon", c: 1}, {n: "Hebrews", c: 13}, {n: "James", c: 5}, {n: "1 Peter", c: 5}, {n: "2 Peter", c: 3}, {n: "1 John", c: 5}, {n: "2 John", c: 1}, {n: "3 John", c: 1}, {n: "Jude", c: 1}, {n: "Revelation", c: 22}
         ];
 
         const versiculoEl = document.getElementById('versiculo');
         const referenciaEl = document.getElementById('referencia');
+        const contenedor = document.querySelector('.contenedor');
 
         async function obtenerVersiculoAleatorio() {
             try {
-                // Suavizamos la transición al esconderlo mientras carga
                 versiculoEl.classList.add('oculto');
                 referenciaEl.classList.add('oculto');
 
-                // 1. Elegimos un Libro Random
                 const libroAleatorio = libros[Math.floor(Math.random() * libros.length)];
-                
-                // 2. Elegimos un Capítulo Random de ese libro
                 const capituloAleatorio = Math.floor(Math.random() * libroAleatorio.c) + 1;
                 
-                // 3. Obtenemos todo el capítulo de la Free Bible API explícitamente en versión King James (KJV)
                 const respuesta = await fetch(`https://bible-api.com/${libroAleatorio.n}+${capituloAleatorio}?translation=kjv`);
                 const datos = await respuesta.json();
                 
                 if (datos.verses && datos.verses.length > 0) {
-                    // 4. Elegimos el Versículo Random entre los de ese capítulo
                     const versiculoElegido = datos.verses[Math.floor(Math.random() * datos.verses.length)];
-                    
                     actualizarInterfaz(versiculoElegido.text, libroAleatorio.n, capituloAleatorio, versiculoElegido.verse);
                 }
             } catch (error) {
@@ -107,36 +101,41 @@
             }
         }
 
+        function ajustarTamanoTexto() {
+            let sizeVW = 10; // Arrancamos con un texto gigante
+            document.documentElement.style.setProperty('--font-size', `${sizeVW}vw`);
+            
+            // BUCLE DE AJUSTE: Si el texto desborda la altura o anchura del contenedor (75%), reduce el tamaño de a poco
+            while ((contenedor.scrollHeight > contenedor.clientHeight || contenedor.scrollWidth > contenedor.clientWidth) && sizeVW > 1) {
+                sizeVW -= 0.2;
+                document.documentElement.style.setProperty('--font-size', `${sizeVW}vw`);
+            }
+        }
+
         function actualizarInterfaz(texto, libro, capitulo, numVersiculo) {
-            // Limpiamos la estructura de la API (suele traer saltos de línea innecesarios)
             const textoLimpio = texto.replace(/\n/g, ' ').trim();
             const textoReferencia = `KJV — ${libro} ${capitulo}:${numVersiculo}`;
             
             versiculoEl.innerText = textoLimpio;
             referenciaEl.innerText = textoReferencia;
             
-            // --- GRADUACIÓN DINÁMICA DEL TAMAÑO ---
-            const longitudTotal = textoLimpio.length + textoReferencia.length;
-            
-            // Calcula un tamaño ideal en viewport width (vw) basado en la cantidad total de caracteres. 
-            // Min: 1.5vw | Max: 8vw
-            let tamanoVW = Math.max(1.5, Math.min(8, 70 / Math.sqrt(longitudTotal)));
-            
-            // Actualizamos la variable CSS y las fuentes se auto-ajustan
-            document.documentElement.style.setProperty('--font-size', `${tamanoVW}vw`);
+            // Ajustamos el tamaño dinámicamente antes de mostrarlo
+            ajustarTamanoTexto();
 
-            // Mostramos los textos con el nuevo versículo ya graduado
+            // Mostramos los textos
             setTimeout(() => {
                 versiculoEl.classList.remove('oculto');
                 referenciaEl.classList.remove('oculto');
             }, 100);
         }
 
-        // Ejecutar al iniciar la página
+        // Reajustar el texto si el usuario cambia el tamaño de la ventana
+        window.addEventListener('resize', ajustarTamanoTexto);
+
         window.onload = () => {
             obtenerVersiculoAleatorio();
-            // Ejecutar infinitamente cada 5 segundos
-            setInterval(obtenerVersiculoAleatorio, 300000);
+            // Corregido a 5000 ms (5 segundos) como pediste en tu primera instrucción
+            setInterval(obtenerVersiculoAleatorio, 300000); 
         };
     </script>
 </body>
