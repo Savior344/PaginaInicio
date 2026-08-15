@@ -230,7 +230,7 @@
 
     async function cargarBiblia() {
         try {
-            const respuesta = await fetch('./eng-kjv.osis.xml');
+            const respuesta = await fetch('eng-kjv.osis.xml');
 
             if (!respuesta.ok) {
                 throw new Error(
