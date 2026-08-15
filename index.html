@@ -1,143 +1,545 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>LOADING VERSE...</title>
+
     <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"%3E%3Cpath d="M12 3L3 10h2v9h6v-6h2v6h6v-9h2L12 3z" fill="%23000"/%3E%3C/svg%3E'>
+
     <style>
+
         * { 
+
             box-sizing: border-box; 
+
             margin: 0; 
+
             padding: 0; 
+
         }
+
         
+
         html, body { 
+
             width: 100%; 
+
             height: 100%; 
+
             background: #000; 
+
         }
+
         
+
         body { 
+
             display: flex; 
+
             align-items: center; 
+
             justify-content: center; 
+
             overflow: hidden; 
+
         }
+
         
+
         /* El contenedor ocupa exactamente el 75% del ancho y alto */
+
         .contenedor { 
+
             width: 75vw; 
+
             height: 75vh; 
+
             display: flex; 
+
             flex-direction: column;
+
             justify-content: space-between; 
+
             overflow: hidden; /* Garantiza que nada se salga visualmente de este 75% */
+
         }
+
         
+
         /* Texto superior izquierdo */
+
         .versiculo { 
+
             font-family: "Times New Roman", Times, serif; 
+
             color: #fff; 
+
             text-transform: uppercase; 
+
             text-align: left;
+
             align-self: flex-start; 
+
             line-height: 1.1; 
+
             font-size: var(--font-size, 4vw);
+
             transition: opacity 0.5s ease-in-out;
+
         }
+
         
+
         /* Texto inferior derecho */
+
         .referencia {
+
             font-family: "Times New Roman", Times, serif; 
+
             color: #aaa; 
+
             text-transform: uppercase; 
+
             text-align: right;
+
             align-self: flex-end; 
+
             line-height: 1.2; 
+
             /* Se asegura de que la referencia siempre sea legible (mínimo 14px) */
+
             font-size: max(calc(var(--font-size, 4vw) * 0.4), 14px); 
+
             transition: opacity 0.5s ease-in-out;
+
             margin-top: 20px;
+
         }
+
+
 
         .oculto {
+
             opacity: 0;
+
         }
+
     </style>
+
 </head>
+
 <body>
 
+
+
     <div class="contenedor">
+
         <div class="versiculo" id="versiculo">LOADING VERSE...</div>
+
         <div class="referencia" id="referencia"></div>
+
     </div>
 
+
+
     <script>
-        const libros = [
-            {n: "Genesis", c: 50}, {n: "Exodus", c: 40}, {n: "Leviticus", c: 27}, {n: "Numbers", c: 36}, {n: "Deuteronomy", c: 34}, {n: "Joshua", c: 24}, {n: "Judges", c: 21}, {n: "Ruth", c: 4}, {n: "1 Samuel", c: 31}, {n: "2 Samuel", c: 24}, {n: "1 Kings", c: 22}, {n: "2 Kings", c: 25}, {n: "1 Chronicles", c: 29}, {n: "2 Chronicles", c: 36}, {n: "Ezra", c: 10}, {n: "Nehemiah", c: 13}, {n: "Esther", c: 10}, {n: "Job", c: 42}, {n: "Psalms", c: 150}, {n: "Proverbs", c: 31}, {n: "Ecclesiastes", c: 12}, {n: "Song of Solomon", c: 8}, {n: "Isaiah", c: 66}, {n: "Jeremiah", c: 52}, {n: "Lamentations", c: 5}, {n: "Ezekiel", c: 48}, {n: "Daniel", c: 12}, {n: "Hosea", c: 14}, {n: "Joel", c: 3}, {n: "Amos", c: 9}, {n: "Obadiah", c: 1}, {n: "Jonah", c: 4}, {n: "Micah", c: 7}, {n: "Nahum", c: 3}, {n: "Habakkuk", c: 3}, {n: "Zephaniah", c: 3}, {n: "Haggai", c: 2}, {n: "Zechariah", c: 14}, {n: "Malachi", c: 4}, {n: "Matthew", c: 28}, {n: "Mark", c: 16}, {n: "Luke", c: 24}, {n: "John", c: 21}, {n: "Acts", c: 28}, {n: "Romans", c: 16}, {n: "1 Corinthians", c: 16}, {n: "2 Corinthians", c: 13}, {n: "Galatians", c: 6}, {n: "Ephesians", c: 6}, {n: "Philippians", c: 4}, {n: "Colossians", c: 4}, {n: "1 Thessalonians", c: 5}, {n: "2 Thessalonians", c: 3}, {n: "1 Timothy", c: 6}, {n: "2 Timothy", c: 4}, {n: "Titus", c: 3}, {n: "Philemon", c: 1}, {n: "Hebrews", c: 13}, {n: "James", c: 5}, {n: "1 Peter", c: 5}, {n: "2 Peter", c: 3}, {n: "1 John", c: 5}, {n: "2 John", c: 1}, {n: "3 John", c: 1}, {n: "Jude", c: 1}, {n: "Revelation", c: 22}
-        ];
+    const libros = [
+        {n: "Genesis", c: 50, osis: "Gen"},
+        {n: "Exodus", c: 40, osis: "Exod"},
+        {n: "Leviticus", c: 27, osis: "Lev"},
+        {n: "Numbers", c: 36, osis: "Num"},
+        {n: "Deuteronomy", c: 34, osis: "Deut"},
+        {n: "Joshua", c: 24, osis: "Josh"},
+        {n: "Judges", c: 21, osis: "Judg"},
+        {n: "Ruth", c: 4, osis: "Ruth"},
+        {n: "1 Samuel", c: 31, osis: "1Sam"},
+        {n: "2 Samuel", c: 24, osis: "2Sam"},
+        {n: "1 Kings", c: 22, osis: "1Kgs"},
+        {n: "2 Kings", c: 25, osis: "2Kgs"},
+        {n: "1 Chronicles", c: 29, osis: "1Chr"},
+        {n: "2 Chronicles", c: 36, osis: "2Chr"},
+        {n: "Ezra", c: 10, osis: "Ezra"},
+        {n: "Nehemiah", c: 13, osis: "Neh"},
+        {n: "Esther", c: 10, osis: "Esth"},
+        {n: "Job", c: 42, osis: "Job"},
+        {n: "Psalms", c: 150, osis: "Ps"},
+        {n: "Proverbs", c: 31, osis: "Prov"},
+        {n: "Ecclesiastes", c: 12, osis: "Eccl"},
+        {n: "Song of Solomon", c: 8, osis: "Song"},
+        {n: "Isaiah", c: 66, osis: "Isa"},
+        {n: "Jeremiah", c: 52, osis: "Jer"},
+        {n: "Lamentations", c: 5, osis: "Lam"},
+        {n: "Ezekiel", c: 48, osis: "Ezek"},
+        {n: "Daniel", c: 12, osis: "Dan"},
+        {n: "Hosea", c: 14, osis: "Hos"},
+        {n: "Joel", c: 3, osis: "Joel"},
+        {n: "Amos", c: 9, osis: "Amos"},
+        {n: "Obadiah", c: 1, osis: "Obad"},
+        {n: "Jonah", c: 4, osis: "Jonah"},
+        {n: "Micah", c: 7, osis: "Mic"},
+        {n: "Nahum", c: 3, osis: "Nah"},
+        {n: "Habakkuk", c: 3, osis: "Hab"},
+        {n: "Zephaniah", c: 3, osis: "Zeph"},
+        {n: "Haggai", c: 2, osis: "Hag"},
+        {n: "Zechariah", c: 14, osis: "Zech"},
+        {n: "Malachi", c: 4, osis: "Mal"},
+        {n: "Matthew", c: 28, osis: "Matt"},
+        {n: "Mark", c: 16, osis: "Mark"},
+        {n: "Luke", c: 24, osis: "Luke"},
+        {n: "John", c: 21, osis: "John"},
+        {n: "Acts", c: 28, osis: "Acts"},
+        {n: "Romans", c: 16, osis: "Rom"},
+        {n: "1 Corinthians", c: 16, osis: "1Cor"},
+        {n: "2 Corinthians", c: 13, osis: "2Cor"},
+        {n: "Galatians", c: 6, osis: "Gal"},
+        {n: "Ephesians", c: 6, osis: "Eph"},
+        {n: "Philippians", c: 4, osis: "Phil"},
+        {n: "Colossians", c: 4, osis: "Col"},
+        {n: "1 Thessalonians", c: 5, osis: "1Thess"},
+        {n: "2 Thessalonians", c: 3, osis: "2Thess"},
+        {n: "1 Timothy", c: 6, osis: "1Tim"},
+        {n: "2 Timothy", c: 4, osis: "2Tim"},
+        {n: "Titus", c: 3, osis: "Titus"},
+        {n: "Philemon", c: 1, osis: "Phlm"},
+        {n: "Hebrews", c: 13, osis: "Heb"},
+        {n: "James", c: 5, osis: "Jas"},
+        {n: "1 Peter", c: 5, osis: "1Pet"},
+        {n: "2 Peter", c: 3, osis: "2Pet"},
+        {n: "1 John", c: 5, osis: "1John"},
+        {n: "2 John", c: 1, osis: "2John"},
+        {n: "3 John", c: 1, osis: "3John"},
+        {n: "Jude", c: 1, osis: "Jude"},
+        {n: "Revelation", c: 22, osis: "Rev"}
+    ];
 
-        const versiculoEl = document.getElementById('versiculo');
-        const referenciaEl = document.getElementById('referencia');
-        const contenedor = document.querySelector('.contenedor');
+    const versiculoEl = document.getElementById('versiculo');
+    const referenciaEl = document.getElementById('referencia');
+    const contenedor = document.querySelector('.contenedor');
 
-        async function obtenerVersiculoAleatorio() {
-            try {
-                versiculoEl.classList.add('oculto');
-                referenciaEl.classList.add('oculto');
+    let xmlDoc = null;
 
-                const libroAleatorio = libros[Math.floor(Math.random() * libros.length)];
-                const capituloAleatorio = Math.floor(Math.random() * libroAleatorio.c) + 1;
-                
-                const respuesta = await fetch(`https://bible-api.com/${libroAleatorio.n}+${capituloAleatorio}?translation=kjv`);
-                const datos = await respuesta.json();
-                
-                if (datos.verses && datos.verses.length > 0) {
-                    const versiculoElegido = datos.verses[Math.floor(Math.random() * datos.verses.length)];
-                    actualizarInterfaz(versiculoElegido.text, libroAleatorio.n, capituloAleatorio, versiculoElegido.verse);
-                }
-            } catch (error) {
-                console.error("Hubo un error obteniendo el versículo:", error);
+    // =========================================================
+    // CARGAR XML
+    // =========================================================
+
+    async function cargarBiblia() {
+        try {
+            const respuesta = await fetch('./eng-kjv.osis.xml');
+
+            if (!respuesta.ok) {
+                throw new Error(
+                    `No se pudo cargar kjv.xml (${respuesta.status})`
+                );
             }
-        }
 
-        function ajustarTamanoTexto() {
-            let sizeVW = 10; // Arrancamos con un texto gigante
-            document.documentElement.style.setProperty('--font-size', `${sizeVW}vw`);
-            
-            // BUCLE DE AJUSTE: Si el texto desborda la altura o anchura del contenedor (75%), reduce el tamaño de a poco
-            while ((contenedor.scrollHeight > contenedor.clientHeight || contenedor.scrollWidth > contenedor.clientWidth) && sizeVW > 1) {
-                sizeVW -= 0.2;
-                document.documentElement.style.setProperty('--font-size', `${sizeVW}vw`);
+            const xmlTexto = await respuesta.text();
+
+            const parser = new DOMParser();
+
+            xmlDoc = parser.parseFromString(
+                xmlTexto,
+                'application/xml'
+            );
+
+            // Detectar errores de XML
+            const parserError =
+                xmlDoc.querySelector('parsererror');
+
+            if (parserError) {
+                throw new Error(
+                    'El XML contiene un error de sintaxis.'
+                );
             }
+
+            console.log('KJV XML cargado correctamente.');
+
+        } catch (error) {
+            console.error(
+                'Error cargando la Biblia:',
+                error
+            );
+
+            versiculoEl.innerText = 'ERROR LOADING XML';
+            referenciaEl.innerText = error.message;
+        }
+    }
+
+    // =========================================================
+    // OBTENER TEXTO REAL DE UN VERSÍCULO
+    // =========================================================
+
+    function obtenerTextoDelVersiculo(verseStart) {
+
+        const partes = [];
+
+        let nodo = verseStart.nextSibling;
+
+        while (nodo) {
+
+            // Si encontramos el cierre del mismo versículo,
+            // terminamos de recopilar el texto.
+            if (
+                nodo.nodeType === Node.ELEMENT_NODE &&
+                nodo.tagName === 'verse' &&
+                nodo.hasAttribute('eID')
+            ) {
+                break;
+            }
+
+            // Texto normal
+            if (nodo.nodeType === Node.TEXT_NODE) {
+                partes.push(nodo.nodeValue);
+            }
+
+            // Elementos como <transChange>
+            else if (nodo.nodeType === Node.ELEMENT_NODE) {
+                partes.push(nodo.textContent);
+            }
+
+            nodo = nodo.nextSibling;
         }
 
-        function actualizarInterfaz(texto, libro, capitulo, numVersiculo) {
-            const textoLimpio = texto.replace(/\n/g, ' ').trim();
-            const textoReferencia = `KJV — ${libro} ${capitulo}:${numVersiculo}`;
-            document.title = `${libro} ${capitulo}:${numVersiculo}`;
-            versiculoEl.innerText = textoLimpio;
-            referenciaEl.innerText = textoReferencia;
-            
-            // Ajustamos el tamaño dinámicamente antes de mostrarlo
-            ajustarTamanoTexto();
+        return partes
+            .join(' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
 
-            // Mostramos los textos
-            setTimeout(() => {
-                versiculoEl.classList.remove('oculto');
-                referenciaEl.classList.remove('oculto');
-            }, 100);
+    // =========================================================
+    // OBTENER VERSÍCULO ALEATORIO
+    // =========================================================
+
+    function obtenerVersiculoAleatorio() {
+
+        try {
+
+            if (!xmlDoc) {
+                console.error(
+                    'El XML todavía no fue cargado.'
+                );
+                return;
+            }
+
+            versiculoEl.classList.add('oculto');
+            referenciaEl.classList.add('oculto');
+
+            // -------------------------------------------------
+            // LIBRO ALEATORIO
+            // -------------------------------------------------
+
+            const libroAleatorio =
+                libros[
+                    Math.floor(
+                        Math.random() * libros.length
+                    )
+                ];
+
+            // -------------------------------------------------
+            // CAPÍTULO ALEATORIO
+            // -------------------------------------------------
+
+            const capituloAleatorio =
+                Math.floor(
+                    Math.random() * libroAleatorio.c
+                ) + 1;
+
+            // Ejemplo:
+            //
+            // Genesis + capítulo 1
+            // ↓
+            // Gen.1.
+            //
+            const prefijo =
+                `${libroAleatorio.osis}.${capituloAleatorio}.`;
+
+            // -------------------------------------------------
+            // TODOS LOS VERSE DE INICIO
+            // -------------------------------------------------
+
+            const todosLosVerse =
+                Array.from(
+                    xmlDoc.getElementsByTagName('verse')
+                );
+
+            // -------------------------------------------------
+            // FILTRAR VERSÍCULOS DEL CAPÍTULO
+            // -------------------------------------------------
+
+            const versiculosDelCapitulo =
+                todosLosVerse.filter(verse => {
+
+                    const osisID =
+                        verse.getAttribute('osisID');
+
+                    return (
+                        osisID &&
+                        osisID.startsWith(prefijo)
+                    );
+                });
+
+            if (versiculosDelCapitulo.length === 0) {
+
+                throw new Error(
+                    `No se encontraron versículos para ${libroAleatorio.n} ${capituloAleatorio}.`
+                );
+            }
+
+            // -------------------------------------------------
+            // VERSÍCULO ALEATORIO
+            // -------------------------------------------------
+
+            const verseStart =
+                versiculosDelCapitulo[
+                    Math.floor(
+                        Math.random() *
+                        versiculosDelCapitulo.length
+                    )
+                ];
+
+            // -------------------------------------------------
+            // NÚMERO DEL VERSÍCULO
+            // -------------------------------------------------
+
+            const numVersiculo =
+                verseStart.getAttribute('n');
+
+            // -------------------------------------------------
+            // OBTENER TEXTO
+            // -------------------------------------------------
+
+            const texto =
+                obtenerTextoDelVersiculo(verseStart);
+
+            // -------------------------------------------------
+            // MOSTRAR
+            // -------------------------------------------------
+
+            actualizarInterfaz(
+                texto,
+                libroAleatorio.n,
+                capituloAleatorio,
+                numVersiculo
+            );
+
+        } catch (error) {
+
+            console.error(
+                'Hubo un error obteniendo el versículo:',
+                error
+            );
         }
+    }
 
-        // Reajustar el texto si el usuario cambia el tamaño de la ventana
-        window.addEventListener('resize', ajustarTamanoTexto);
+    // =========================================================
+    // AJUSTAR TAMAÑO
+    // =========================================================
 
-        window.onload = () => {
+    function ajustarTamanoTexto() {
+
+        let sizeVW = 10;
+
+        document.documentElement.style.setProperty(
+            '--font-size',
+            `${sizeVW}vw`
+        );
+
+        while (
+            (
+                contenedor.scrollHeight >
+                contenedor.clientHeight ||
+
+                contenedor.scrollWidth >
+                contenedor.clientWidth
+            ) &&
+            sizeVW > 1
+        ) {
+
+            sizeVW -= 0.2;
+
+            document.documentElement.style.setProperty(
+                '--font-size',
+                `${sizeVW}vw`
+            );
+        }
+    }
+
+    // =========================================================
+    // ACTUALIZAR INTERFAZ
+    // =========================================================
+
+    function actualizarInterfaz(
+        texto,
+        libro,
+        capitulo,
+        numVersiculo
+    ) {
+
+        const textoLimpio =
+            texto
+                .replace(/\n/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+
+        const textoReferencia =
+            `KJV — ${libro} ${capitulo}:${numVersiculo}`;
+
+        document.title =
+            `${libro} ${capitulo}:${numVersiculo}`;
+
+        versiculoEl.innerText =
+            textoLimpio;
+
+        referenciaEl.innerText =
+            textoReferencia;
+
+        ajustarTamanoTexto();
+
+        setTimeout(() => {
+
+            versiculoEl.classList.remove('oculto');
+            referenciaEl.classList.remove('oculto');
+
+        }, 100);
+    }
+
+    // =========================================================
+    // RESIZE
+    // =========================================================
+
+    window.addEventListener(
+        'resize',
+        ajustarTamanoTexto
+    );
+
+    // =========================================================
+    // INICIO
+    // =========================================================
+
+    window.addEventListener(
+        'load',
+        async () => {
+
+            // Cargamos TODA la Biblia una sola vez.
+            await cargarBiblia();
+
+            // Primer versículo.
             obtenerVersiculoAleatorio();
-            // Corregido a 5000 ms (5 segundos) como pediste en tu primera instrucción
-            setInterval(obtenerVersiculoAleatorio, 300000); 
-        };
-    </script>
+
+            // Nuevo versículo cada 5 minutos.
+            setInterval(
+                obtenerVersiculoAleatorio,
+                300000
+            );
+        }
+    );
+</script>
+
 </body>
+
 </html>
